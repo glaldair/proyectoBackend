@@ -1,6 +1,8 @@
 'use Strict';
 
 const Contenedor = require('./class/Contenedor.js');    // Importar la clase Contenedor
+const ContenedorMDB = require('./class/ContenedorMDB.js');    // Funcion para guardar los productos en el servidor
+const ContenedorFB = require('./class/ContenedorFB.js');    // Importar la clase Contenedor
 const { Producto, ProductoCarrito } = require('./class/Producto.js');        // Importar la clase Producto
 const Carrito = require('./class/Carrito.js');          // Importar la clase Carrito
 
@@ -10,8 +12,10 @@ apiProductos.guardarArchivo();
 const carrito = new Carrito('./carrito.json');          // Crear el contenedor de carritos.
 carrito.guardarArchivo();
 
+const contenedorMDB = new ContenedorMDB('productos');
+contenedorMDB.guardarArchivo();
 
-
+const contenedorFB = new ContenedorFB('productos');
 
 
 // Funcion opcional para mostrar los productos de forma manual.
@@ -30,10 +34,6 @@ function guardarProductos(arr) {
     }
 }
 guardarProductos(arrproductos); // Prueba para guardar los productos en el archivo productos.json
-
-
-
-
 
 
 const express = require('express');
@@ -66,19 +66,22 @@ app.use(express.static('public'));
 app.get('/', async (req, res) => {
     res.render('main');
 });
-
-app.get('/form-productos', async (req, res) => {
-    res.render('addProducto');
+app.get('/fs', async (req, res) => {
+    res.render('fs/fs');
 });
 
-app.get('/productos', async (req, res) => {
-    res.render('productos', { productos: await apiProductos.getAll() });
+app.get('/fs/form-productos', async (req, res) => {
+    res.render('fs/addProducto');
+});
+
+app.get('/fs/productos', async (req, res) => {
+    res.render('fs/productos', { productos: await apiProductos.getAll() });
 });
 
 /*
     Router de productos
 */
-router.get('/productos/:id', async (req, res) => {
+router.get('/fs/productos/:id', async (req, res) => {
     let id = req.params.id;
     if (id) {
         const producto = await apiProductos.getById(id);
@@ -88,29 +91,106 @@ router.get('/productos/:id', async (req, res) => {
         res.json(productos);
     }
 });
-router.post('/productos', async (req, res) => {
+router.post('/fs/productos', async (req, res) => {
     const producto = new Producto(
         req.body.id,
         req.body.nombre,
         req.body.descripcion,
         req.body.codigo,
-        req.body.foto,
+        req.body.imagen,
         req.body.precio,
         req.body.stock,
         req.body.categoria
     );
-    apiProductos.save(producto);
+    await apiProductos.save(producto);
     res.json(producto);
 });
-router.put('/productos/:id', async (req, res) => {
+router.put('/fs/productos/:id', async (req, res) => {
     let id = req.params.id;
     let producto = req.body;
     await apiProductos.update(id, producto);
     res.json(producto);
 });
-router.delete('/productos/:id', async (req, res) => {
+router.delete('/fs/productos/:id', async (req, res) => {
     let id = req.params.id;
     await apiProductos.deleteById(id);
+    res.json({success: true});
+});
+
+
+// app de mongo
+app.get('/mongo', async (req, res) => {
+    res.render('mongo/mongo');
+});
+app.get('/mongo/productos', async (req, res) => {
+    res.render('mongo/productos', { productos: await contenedorMDB.getAll() });
+});
+app.get('/mongo/form-productos', async (req, res) => {
+    res.render('mongo/addProducto');
+});
+
+router.get('/mongo/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    const producto = await contenedorMDB.getById(id);
+    res.json(producto);
+});
+router.post('/mongo/productos', async (req, res) => {
+    const producto = new Producto(
+        req.body.id,
+        req.body.nombre,
+        req.body.descripcion,
+        req.body.codigo,
+        req.body.imagen,
+        req.body.precio,
+        req.body.stock,
+        req.body.categoria
+    );
+    await contenedorMDB.save(producto);
+    res.json(producto);
+});
+router.put('/mongo/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    let producto = req.body;
+    await contenedorMDB.update(id, producto);
+    res.json(producto);
+});
+router.delete('/mongo/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    await contenedorMDB.deleteById(id);
+    res.json({success: true});
+});
+
+
+// app de firebase
+app.get('/firebase', async (req, res) => {
+    res.render('firebase/firebase');
+});
+app.get('/firebase/productos', async (req, res) => {
+    res.render('firebase/productos', { productos: await contenedorFB.getAll() });
+});
+app.get('/firebase/form-productos', async (req, res) => {
+    res.render('firebase/addProducto');
+});
+
+router.get('/firebase/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    const producto = await contenedorFB.getById(id);
+    res.json(producto);
+});
+router.post('/firebase/productos', async (req, res) => {
+    const producto = req.body;
+    await contenedorFB.save(producto);
+    res.json(producto);
+});
+router.put('/firebase/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    let producto = req.body;
+    await contenedorFB.update(id, producto);
+    res.json(producto);
+});
+router.delete('/firebase/productos/:id', async (req, res) => {
+    let id = req.params.id;
+    await contenedorFB.deleteById(id);
     res.json({success: true});
 });
 
@@ -148,7 +228,7 @@ router.post('/carrito/:id/productos', async (req, res) => {
         req.body.nombre,
         req.body.descripcion,
         req.body.codigo,
-        req.body.foto,
+        req.body.imagen,
         req.body.precio,
         req.body.categoria
     );

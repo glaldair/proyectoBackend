@@ -1,7 +1,12 @@
 {{!-- Estilos con clases de bootstrap --}}
-{{> navbar}}
-
 <main class="text-center d-flex align-items-center justify-content-center flex-column" style="height: 90vh;">
-    <h1>Bienvenido a la tienda</h1>
-    <p class="color-primary">Usa la barra de navegacion para navegar entre las diferentes paginas</p>
+    <h1>Bienvenido a la aplicación de prueba</h1>
+    <p>
+        Elije una opción:
+    </p>
+    <div class="d-flex justify-content-center">
+        <a href="/fs" class="btn btn-primary m-2">File System</a>
+        <a href="/mongo" class="btn btn-primary m-2">Mongo</a>
+        <a href="/firebase" class="btn btn-primary m-2">Firebase</a>
+    </div>
 </main>

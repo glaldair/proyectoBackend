@@ -1,0 +1,25 @@
+{{> navbarmongo }}
+
+<main class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Productos</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card-columns">
+                {{#each productos}}
+                    <div class="card">
+                        <img class="card-img-top" src="{{ imagen }}" alt={{ nombre }}>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ nombre }}</h5>
+                            <p class="card-text">{{ descripcion }}</p>
+                            <p class="card-text">${{ precio }}</p>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</main>

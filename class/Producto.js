@@ -1,11 +1,11 @@
 class Producto {
-    constructor(id, nombre, descripcion, codigo, foto, precio, stock, categoria) {
+    constructor(id, nombre, descripcion, codigo, imagen, precio, stock, categoria) {
         this.id = parseInt(id);
         this.timestamp = this.getDate();
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.codigo = codigo;
-        this.foto = foto;
+        this.imagen = imagen;
         this.precio = parseFloat(precio);
         this.stock = parseInt(stock);
         this.categoria = categoria;
@@ -22,13 +22,13 @@ class Producto {
 
 // Exportar la class Contenedor
 class ProductoCarrito {
-    constructor(id, nombre, descripcion, codigo, foto, precio, categoria) {
+    constructor(id, nombre, descripcion, codigo, imagen, precio, categoria) {
         this.id = parseInt(id);
         this.timestamp = this.getDate();
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.codigo = codigo;
-        this.foto = foto;
+        this.imagen = imagen;
         this.precio = parseFloat(precio);
         this.categoria = categoria;
         this.cantidad = 1;
